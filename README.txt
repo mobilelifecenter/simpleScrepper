@@ -1,6 +1,6 @@
 README simpleScrapper V 0.1 
 
-With the curren version of the scrapper one need to conduct several
+With the current version of the scrapper one need to conduct several
 steps, which are described below. Few of these steps are not
 fully automated. However, future versions that follow could 
 achieve a fully automated scrapping procedure.
@@ -36,7 +36,7 @@ simpleScrapper -- code
                                                  -- ... (others)
 
  
-Here we show how to scrap data from San Miguel de Allende
+Here we show how to scrap data from Guanajuato
 City as a means to illustrate how the scrapper works.
 
 1. Run script scapListingsNumbers.py located in code's folder.
