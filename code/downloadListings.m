@@ -11,7 +11,7 @@ listings = textread( [ theDir  prefix '_listings.txt' ] );
 
 %%
 
-for l = 1 : numel( listings ) %169
+for l = 520 : numel( listings ) %169
    
     listing =  num2str( listings( l ) ) ;
     %listing = '42817';
@@ -32,8 +32,8 @@ for l = 1 : numel( listings ) %169
 
     strContents = '';
 
-    if numPages > 1
-        for i = 2 : numPages,
+    if numPages > 0
+        for i = 1 : numPages,
 
             for j = 1 : 5 % try five times
                 try

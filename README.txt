@@ -14,7 +14,7 @@ Three key tools are used to support the scrapper functionality:
 (regular expressions) python module) and 3) xml and re helper functions
  available in matlab.
 
-These tools allow the scrapper to find unambigous
+These tools allow the scrapper to find unambiguous
 patterns in the html files that are used to extact data.
 
 The scrapper code and data are stored in a folder named
@@ -39,7 +39,7 @@ simpleScrapper -- code
 Here we show how to scrap data from Guanajuato
 City as a means to illustrate how the scrapper works.
 
-1. Run script scapListingsNumbers.py located in code's folder.
+1. Run script scapListingsNumbers.py located in the code's folder.
 In order to run this script, you should have each of the
 html files associated with the pages showing the listings. 
 stored in the directory places/guanajuato/ .

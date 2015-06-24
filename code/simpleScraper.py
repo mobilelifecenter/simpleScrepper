@@ -9,7 +9,7 @@ def filter_non_printable(str):
 
 
 
-def scrapData( theDir, listing, bVerbose ):
+def scrapData( theDir, listing, listingn, bVerbose ):
     #import urllib2
     #listing = '4719629';
     #response = urllib2.urlopen('https://www.airbnb.com/rooms/' + listing )
@@ -20,9 +20,9 @@ def scrapData( theDir, listing, bVerbose ):
     print("."),;
     if bVerbose: print( unicode('\n========================== Simple scraper v 0.1 ========================== \n' ) );
     
-    soup = BeautifulSoup(open( theDir + listing + '/' + listing + '.html' ))
+    soup = BeautifulSoup(open( theDir + listing + '/' + listingn + '.html' ))
 
-    f = io.open( theDir + listing + '/' + listing  + '.xml', 'w', encoding='utf8')
+    f = io.open( theDir + listing + '/' + listing + '.xml', 'w', encoding='utf8')
     if bVerbose: print('Output => ' + theDir + listing + '/' + listing  + '.xml\n');
 
     if bVerbose: print( unicode('========================================================================= \n' ) );
@@ -47,10 +47,10 @@ def scrapData( theDir, listing, bVerbose ):
                 m = re.search( '/users/show/', token['href'] );
                 if m != None:
                      if len( m.group() ) > 0:
-		         items = re.findall( '\d*', token['href'] );
-			 for item in items:
-			      if item != '':
-				    numbersList.append( item );
+                         items = re.findall( '\d*', token['href'] );
+                         for item in items:
+			     if item != '':
+			         numbersList.append( item );
     #print( numbersList );
     listUnique = set( numbersList );
     othersList = [];
@@ -114,24 +114,29 @@ def scrapData( theDir, listing, bVerbose ):
                 elif isinstance( token['content'], str ):
                     desc = str( token['content']);
                 else:
-                     raise('Unexpected instance.')                    
+                     #print('Unexpected instance. Hope it is OK.')
+                      desc = unicode( token['content'] );
+                      print('-'),;
 
-                descr = str( desc );
+                descr = unicode( desc );
                 descr = descr.replace('&','and' );
                 descr = filter_non_printable( descr );
-                f.write( unicode( '\n<tag type ="' + token['property'] + '">' + str( descr ) + '</tag>' ) );
-                if bVerbose: print( unicode( '<tag type ="' + token['property'] + '">' + str( descr ) + '</tag>' ) );
+                f.write( unicode( '\n<tag type ="' + token['property'] + '">' + unicode( descr ) + '</tag>' ) );
+                if bVerbose: print( unicode( '<tag type ="' + token['property'] + '">' + unicode( descr ) + '</tag>' ) );
             else:
                 if isinstance( token['content'], list ):
                     desc = str( token['content'][0] );
                 elif isinstance( token['content'], str ):
                     desc = str( token['content'] );
                 else:
-                     raise('Unexpected instance.')
+                     #print( desc ); 
+                     #print('Unexpected instance. Hope it is OK.')
+                     desc = unicode( token['content'] ); 
+                     print('-'),;
                 desc = desc.replace( '&', 'and' );
                 desc = filter_non_printable( desc );
-                f.write( unicode( '\n<tag type ="' + token['property'] + '">' + str( desc ) + '</tag>' ) );
-                if bVerbose: print( unicode( '<tag type ="' + token['property'] + '">' + str( desc ) + '</tag>' ) );
+                f.write( unicode( '\n<tag type ="' + token['property'] + '">' + unicode( desc ) + '</tag>' ) );
+                if bVerbose: print( unicode( '<tag type ="' + token['property'] + '">' + unicode( desc ) + '</tag>' ) );
      
     #======================================  Stars
     f.write(unicode( '\n<!-- Stars -->') )
@@ -366,7 +371,8 @@ def scrapData( theDir, listing, bVerbose ):
     numReviews = '0';
     for token in tokens:
         for tok in token.contents:
-                string = str( tok )
+                # string = str( tok ) #original code
+                string = unicode( tok );  
                 if isinstance( string, str ):
                     if len( re.findall( 'Reviews', string ) ) != 0:
                         codes = re.findall( '\d.', string );
@@ -391,6 +397,7 @@ def scrapReviews( theDir, listing, name, bVerbose ):
     
     soup = BeautifulSoup(open( theDir + listing + '/' + name + '.html' ))
 
+
     f = io.open( theDir + listing + '/' + listing  + '.xml', 'a', encoding='utf8') # append data
     
     tokens = soup.select( ".expandable-content" )
@@ -412,8 +419,14 @@ def scrapReviews( theDir, listing, name, bVerbose ):
 				for tok in toks:
 				    if len( tok.contents ) > 0:
 					  for tc in range( len( tok.contents ) ):
-						desc = str(tok.contents[ tc ]); #tok.contents[0];
-						desc = desc.replace('&', 'and');
+                                                #print(  unicode( tok.contents[ 0 ]  ) )
+                                                #print( tc )
+                                                desc = unicode( tok.contents[ tc ] );
+                                                desc = desc.replace('&', 'and');
+                                                #print( desc )
+                                                # original code:      
+						#desc = str( tok.contents[ tc ] ); #tok.contents[0];
+						#desc = desc.replace('&', 'and');
 						comment = comment + desc;
 					  comment = filter_non_printable( comment );
 				f.write( '\n<tag type="guestReview">' + unicode( comment )  )

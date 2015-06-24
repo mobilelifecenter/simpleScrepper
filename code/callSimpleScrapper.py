@@ -1,11 +1,15 @@
 #!/usr/bin/python
 
+
 import simpleScraper
 
 bVerbose = 0;
-theDir = '../data/snapshots/06082015/guanajuato/';
 
-f = open( theDir + 'guanajuato_listings_py.txt', 'r' );
+prefix = 'lausanne'
+
+theDir = '../data/snapshots/06082015/' + prefix + '/';
+
+f = open( theDir + prefix + '_listings_py.txt', 'r' );
 listings = list( f );
 f.close();
 
@@ -16,11 +20,12 @@ listing = [];
 for listing in listings:
     listing = listing.replace('\n','');
 
-    #listing = '6363636';
-    hostID = simpleScraper.scrapData( theDir, listing, bVerbose );
-    #print( hostID );
-    simpleScraper.scrapReviews( theDir, listing, listing, bVerbose ); 
 
+
+    #listing = '6363636';
+    hostID = simpleScraper.scrapData( theDir, listing, listing + '_1',  bVerbose );
+    #print( listing );
+    simpleScraper.scrapReviews( theDir, listing, listing + '_1', bVerbose ); 
 
     
     f = open( theDir + listing + '/' + listing  + '_'  + 'metadata.txt', 'r');
@@ -30,13 +35,13 @@ for listing in listings:
         for i in range(2, int( line[0] )):
             simpleScraper.scrapReviews( theDir, listing, listing + '_' + str( i ), bVerbose );
 
-    simpleScraper.scrapHostAnswers( theDir, listing, listing, bVerbose );
+    simpleScraper.scrapHostAnswers( theDir, listing, listing + '_1', bVerbose );
 
     if line[0] > 1:    
         for i in range(2, int( line[0] )):
             simpleScraper.scrapHostAnswers( theDir, listing, listing + '_' + str( i ), bVerbose ); 
 
-    simpleScraper.getUsersIds( theDir, listing, listing, hostID, bVerbose );
+    simpleScraper.getUsersIds( theDir, listing, listing + '_1', hostID, bVerbose );
 
     if line[0] > 1:    
         for i in range(2, int( line[0] )):

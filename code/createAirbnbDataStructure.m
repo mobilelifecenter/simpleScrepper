@@ -3,8 +3,10 @@ clear
 
 %%
 clear
-theDir = '../data/snapshots/06082015/sanmiguel/';
-listings = textread( [ theDir 'sanmiguel_listings.txt' ] );
+prefix = 'guanajuato';
+
+theDir = [ '../data/snapshots/06082015/' prefix '/'];
+listings = textread( [ theDir prefix '_listings.txt' ] );
 
 
 for l = 1 : numel( listings )
