@@ -20,7 +20,7 @@ def scrapData( theDir, listing, listingn, bVerbose ):
     print("."),;
     if bVerbose: print( unicode('\n========================== Simple scraper v 0.1 ========================== \n' ) );
     
-    soup = BeautifulSoup(open( theDir + listing + '/' + listingn + '.html' ))
+    soup = BeautifulSoup(open( theDir + listing + '/' + listingn + '.html' ) )
 
     f = io.open( theDir + listing + '/' + listing + '.xml', 'w', encoding='utf8')
     if bVerbose: print('Output => ' + theDir + listing + '/' + listing  + '.xml\n');
@@ -42,15 +42,20 @@ def scrapData( theDir, listing, listingn, bVerbose ):
     if bVerbose: print( unicode( '<!-- Host and users ids -->' ))
     numbersList = [];
     tokens = soup.find_all( 'a' );
+    #val = -1;
+    
+    
     for token in tokens:
-          if token.has_attr('href'):
-                m = re.search( '/users/show/', token['href'] );
-                if m != None:
-                     if len( m.group() ) > 0:
-                         items = re.findall( '\d*', token['href'] );
-                         for item in items:
-			     if item != '':
-			         numbersList.append( item );
+        if token.has_attr('href'):
+            m = re.search( '/users/show/', token['href'] );
+            if m != None:
+                if len( m.group() ) > 0:
+                    items = re.findall( '\d*', token['href'] );
+                    for item in items:
+                        if item != '':
+                            numbersList.append( item );
+
+			         
     #print( numbersList );
     listUnique = set( numbersList );
     othersList = [];
@@ -63,6 +68,8 @@ def scrapData( theDir, listing, listingn, bVerbose ):
     for number in listUnique:
           if number != val:
               othersList.append( number );
+
+ 
 
     hostID = val;          
     #print('Val' + str( val ) );
@@ -116,7 +123,8 @@ def scrapData( theDir, listing, listingn, bVerbose ):
                 else:
                      #print('Unexpected instance. Hope it is OK.')
                       desc = unicode( token['content'] );
-                      print('-'),;
+                      #print( desc );
+                      #print('-'),;
 
                 descr = unicode( desc );
                 descr = descr.replace('&','and' );
@@ -131,8 +139,10 @@ def scrapData( theDir, listing, listingn, bVerbose ):
                 else:
                      #print( desc ); 
                      #print('Unexpected instance. Hope it is OK.')
-                     desc = unicode( token['content'] ); 
-                     print('-'),;
+                     desc = unicode( token['content'] );
+                     #print( desc );
+                     #print('-'),;
+
                 desc = desc.replace( '&', 'and' );
                 desc = filter_non_printable( desc );
                 f.write( unicode( '\n<tag type ="' + token['property'] + '">' + unicode( desc ) + '</tag>' ) );
@@ -267,11 +277,12 @@ def scrapData( theDir, listing, listingn, bVerbose ):
             if token.contents[0].string and token.contents[1].string:
                 desc = token.contents[1].string;
                 desc = desc.replace( '&', 'and' );
-                #print ( repr( token.contents[0].string ), repr( token.contents[1].string ) );
-                f.write( unicode( '\n<tag type ="' + ( token.contents[0].string )  + '">' + ( desc ) + '</tag>' ) );
-                if bVerbose: print( unicode( '<tag type ="' + ( token.contents[0].string ) + '">' + ( desc ) + '</tag>' ) );
-                spaceAndPricesName.append( token.contents[0].string );
-                spaceAndPricesValue.append( token.contents[1].string );
+                if desc != '\n':
+                    #print ( repr( token.contents[0].string ), repr( token.contents[1].string ) );
+                    f.write( unicode( '\n<tag type ="' + ( token.contents[0].string )  + '">' + ( desc ) + '</tag>' ) );
+                    if bVerbose: print( unicode( '<tag type ="' + ( token.contents[0].string ) + '">' + ( desc ) + '</tag>' ) );
+                    spaceAndPricesName.append( token.contents[0].string );
+                    spaceAndPricesValue.append( token.contents[1].string );
 
 
                     
@@ -354,12 +365,13 @@ def scrapData( theDir, listing, listingn, bVerbose ):
                 if token['class'][0] == 'col-md-6':
                     if token.parent['class'][0] == 'row':
                         if len( token.contents ) == 3:
-                            #if bVerbose: print( token.contents )                       
-                            if re.search( 'minimum stay', token.contents[2].string ):
-                                    toks = token.find_all( 'strong' );
-                                    for tok in toks:
-                                        f.write( '\n<tag type="availability">' + unicode( tok.contents[0] ) + "</tag>" )
-                                        if bVerbose: print('<tag type="availability">' + unicode( tok.contents[0] ) + "</tag>" );
+                            if   token.contents[2].string != None:
+                                #if bVerbose: print( token.contents[2].string )
+                                if re.search( 'minimum stay', token.contents[2].string ):
+                                        toks = token.find_all( 'strong' );
+                                        for tok in toks:
+                                            f.write( '\n<tag type="availability">' + unicode( tok.contents[0] ) + "</tag>" )
+                                            if bVerbose: print('<tag type="availability">' + unicode( tok.contents[0] ) + "</tag>" );
 
 
     # Search number of reviews
@@ -407,18 +419,18 @@ def scrapReviews( theDir, listing, name, bVerbose ):
 
     for token in tokens:
 	  #print(token)
-	  if token.parent.has_attr( 'class' ):
-		if token.parent['class']:
-		    if len( token.parent['class'] ) == 3:
-			  toquenParentClass = token.parent['class'];
-			  if ( toquenParentClass[0] == 'review-text' ) & \
-			     ( toquenParentClass[1] == 'expandable' ) & \
-			     ( toquenParentClass[2] == 'expandable-trigger-more' ):
-				toks = token.find_all( 'p' );
-				comment = '';
-				for tok in toks:
-				    if len( tok.contents ) > 0:
-					  for tc in range( len( tok.contents ) ):
+          if token.parent.has_attr( 'class' ):
+              if token.parent['class']:
+                  if len( token.parent['class'] ) == 3:
+                          toquenParentClass = token.parent['class'];
+                          if ( toquenParentClass[0] == 'review-text' ) & \
+                             ( toquenParentClass[1] == 'expandable' ) & \
+                             ( toquenParentClass[2] == 'expandable-trigger-more' ):
+                                toks = token.find_all( 'p' );
+                                comment = '';
+                                for tok in toks:
+                                    if len( tok.contents ) > 0:
+                                        for tc in range( len( tok.contents ) ):
                                                 #print(  unicode( tok.contents[ 0 ]  ) )
                                                 #print( tc )
                                                 desc = unicode( tok.contents[ tc ] );
@@ -427,13 +439,13 @@ def scrapReviews( theDir, listing, name, bVerbose ):
                                                 # original code:      
 						#desc = str( tok.contents[ tc ] ); #tok.contents[0];
 						#desc = desc.replace('&', 'and');
-						comment = comment + desc;
-					  comment = filter_non_printable( comment );
-				f.write( '\n<tag type="guestReview">' + unicode( comment )  )
-				if bVerbose: print( '<tag type="guestReview">' + unicode( comment )  )
-				if token.parent.has_attr('data-review-id'):
-                                      f.write( ' review-id::' + unicode( token.parent['data-review-id'] ) + '::id-review' + '</tag>' )
-				      if bVerbose: print(  ' review-id::' + unicode( token.parent['data-review-id'] ) + '::id-review' + '</tag>' )
+                                                comment = comment + desc;
+                                        comment = filter_non_printable( comment );
+                                f.write( '\n<tag type="guestReview">' + unicode( comment )  )
+                                if bVerbose: print( '<tag type="guestReview">' + unicode( comment )  )
+                                if token.parent.has_attr('data-review-id'):
+                                    f.write( ' review-id::' + unicode( token.parent['data-review-id'] ) + '::id-review' + '</tag>' )
+                                    if bVerbose: print(  ' review-id::' + unicode( token.parent['data-review-id'] ) + '::id-review' + '</tag>' )
 
 
     f.close();
@@ -463,7 +475,8 @@ def scrapHostAnswers( theDir, listing, name, bVerbose ):
                    answer = answer + desc;
  
                    
-        if bGo == 1:                       
+        if bGo == 1:
+              answer = filter_non_printable( answer );
               f.write( '\n<tag type="hostAnswer">' + unicode( answer  ) )
               if bVerbose: print( '<tag type="hostAnswer">' + unicode( answer )  )
               toks = token.find_all( 'div' )
@@ -502,12 +515,12 @@ def getUsersIds( theDir, listing, name, hostID, bVerbose ):
 	    if token.has_attr('href') and token.has_attr('name') :
 		    m = re.search( '/users/show/', token['href'] );
 		    if m != None:
-			  if len( m.group() ) > 0:
-				  items = re.findall( '\d*', token['href'] );
-				  for item in items:
-					if item != '':
+                          if len( m.group() ) > 0:
+                                  items = re.findall( '\d*', token['href'] );
+                                  for item in items:
+                                             if item != '':
                                              #print( item, token['name']) 
-					     numbersList.append( item + '::' + token['name']);
+                                                 numbersList.append( item + '::' + token['name']);
 					     
     #print( numbersList );
     listUnique = set( numbersList );

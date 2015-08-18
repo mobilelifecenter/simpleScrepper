@@ -3,15 +3,15 @@ clear
 %% This script may take sometime to finish depending on the
 %% network bandwidth and the number of pages associated with each listing 
 
-prefix = 'guanajuato';
-theDir = [ '../data/snapshots/06082015/' prefix '/' ];
+prefix = 'sanmiguel';
+theDir = [ '../data/snapshots/08112015/' prefix '/' ];
 
 
 listings = textread( [ theDir  prefix '_listings.txt' ] );
 
 %%
 
-for l = 520 : numel( listings ) %169
+for l = 318 : 318, %numel( listings ) %169
    
     listing =  num2str( listings( l ) ) ;
     %listing = '42817';
@@ -35,9 +35,10 @@ for l = 520 : numel( listings ) %169
     if numPages > 0
         for i = 1 : numPages,
 
-            for j = 1 : 5 % try five times
+            for j = 1 : 5 % try 1 time
                 try
                     strContents = urlread( ['https://www.airbnb.com/rooms/' listing '?reviews_page=' num2str( i )  ]);
+                   
                     break;
                 catch e
                     fprintf('.\n');

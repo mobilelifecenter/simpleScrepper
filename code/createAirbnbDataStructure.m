@@ -3,9 +3,9 @@ clear
 
 %%
 clear
-prefix = 'guanajuato';
+prefix = 'sanmiguel';
 
-theDir = [ '../data/snapshots/06082015/' prefix '/'];
+theDir = [ '../data/snapshots/08112015/' prefix '/'];
 listings = textread( [ theDir prefix '_listings.txt' ] );
 
 
@@ -16,6 +16,8 @@ for l = 1 : numel( listings )
     lstruct( l )  = createAirbnbStruct( theDir, listing );
 end
 
-save( 'sanmiguel_lstruct', 'lstruct' );
+filename = [ 'lstruct_' prefix '.mat' ];
+save( ['../data/snapshots/08112015/'  prefix '/'  filename ], 'lstruct' );
+
 
 

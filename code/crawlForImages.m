@@ -15,9 +15,10 @@ else
 end
 
 %%
-tokens = regexp( strContents, 'https://a([0123456789]).muscache.com/ic/pictures[^\?]*', 'match');
+tokens = regexp( strContents, 'https://a([0123456789]).muscache.com/ac/pictures[^\?]*', 'match');
 tokens = unique( tokens );
 for t = 1 : numel( tokens )
+    t;
    imagen = imread( char(unicode2native(tokens{ t })) );
    imwrite( imagen, [ theDir listing '/images/' listing '_image_' num2str(t) '.jpeg' ] );  
 end
